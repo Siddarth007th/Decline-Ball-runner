@@ -1,399 +1,352 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2113.65">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #5a5a5a; -webkit-text-stroke: #5a5a5a}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #570002; -webkit-text-stroke: #570002}
-    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #f6000b; -webkit-text-stroke: #f6000b}
-    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #0000ff; -webkit-text-stroke: #0000ff}
-    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #000000; -webkit-text-stroke: #000000}
-    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #3c3f43; -webkit-text-stroke: #3c3f43}
-    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #000000; -webkit-text-stroke: #000000; min-height: 16.0px}
-    span.s1 {font-kerning: none; background-color: #e7edf5}
-    span.s2 {font-kerning: none; color: #f6000b; background-color: #e7edf5; -webkit-text-stroke: 0px #f6000b}
-    span.s3 {font-kerning: none; color: #1f1f1f; background-color: #e7edf5; -webkit-text-stroke: 0px #1f1f1f}
-    span.s4 {font-kerning: none; color: #000000; background-color: #e7edf5; -webkit-text-stroke: 0px #000000}
-    span.s5 {font-kerning: none; color: #0000ff; background-color: #e7edf5; -webkit-text-stroke: 0px #0000ff}
-    span.s6 {font-kerning: none; color: #570002; background-color: #e7edf5; -webkit-text-stroke: 0px #570002}
-    span.s7 {font-kerning: none; color: #156536; background-color: #e7edf5; -webkit-text-stroke: 0px #156536}
-    span.s8 {font-kerning: none; color: #0b2981; background-color: #e7edf5; -webkit-text-stroke: 0px #0b2981}
-    span.s9 {font-kerning: none; color: #175f20; background-color: #e7edf5; -webkit-text-stroke: 0px #175f20}
-    span.s10 {font-kerning: none}
-    span.s11 {font-kerning: none; color: #5a00b6; background-color: #e7edf5; -webkit-text-stroke: 0px #5a00b6}
-    span.s12 {font-kerning: none; color: #125c5a; background-color: #e7edf5; -webkit-text-stroke: 0px #125c5a}
-    span.s13 {font-kerning: none; color: #91330c; background-color: #e7edf5; -webkit-text-stroke: 0px #91330c}
-    span.s14 {font-kerning: none; color: #3c3f43; background-color: #e7edf5; -webkit-text-stroke: 0px #3c3f43}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decline Runner</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: 'Arial', sans-serif;
+        }
+        #game-container {
+            position: relative;
+            border: 2px solid #333;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+        canvas {
+            display: block;
+            background-color: #fff; /* This ensures the game background is white */
+        }
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allows clicks to go through to the canvas if needed */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+            text-align: center;
+        }
+        .hidden {
+            display: none;
+        }
+        h1 {
+            font-size: 3rem;
+            margin: 0;
+        }
+        p {
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+        #score-display {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 1.5rem;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE</span><span class="s2"> html</span><span class="s1">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;</span><span class="s1">html</span><span class="s4"> </span><span class="s2">lang</span><span class="s3">=</span><span class="s5">"en"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;</span><span class="s1">head</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">meta</span><span class="s4"> </span><span class="s1">charset</span><span class="s3">=</span><span class="s5">"UTF-8"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">meta</span><span class="s4"> </span><span class="s2">name</span><span class="s3">=</span><span class="s1">"viewport"</span><span class="s4"> </span><span class="s2">content</span><span class="s3">=</span><span class="s1">"width=device-width, initial-scale=1.0"</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">title</span><span class="s3">&gt;</span><span class="s1">Decline Runner</span><span class="s3">&lt;/</span><span class="s6">title</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s1">style</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s6">body</span><span class="s1"> {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">margin:</span><span class="s1"> </span><span class="s7">0</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">padding:</span><span class="s1"> </span><span class="s7">0</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">display:</span><span class="s1"> </span><span class="s8">flex</span><span class="s1">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">justify-content:</span><span class="s4"> </span><span class="s8">center</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">align-items:</span><span class="s1"> </span><span class="s8">center</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">height:</span><span class="s1"> </span><span class="s7">100vh</span><span class="s1">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">background-color:</span><span class="s4"> </span><span class="s8">#f0f0f0</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">font-family:</span><span class="s1"> </span><span class="s9">'Arial'</span><span class="s1">, </span><span class="s8">sans-serif</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">#game-container</span><span class="s4"> {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">position:</span><span class="s1"> </span><span class="s8">relative</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">border:</span><span class="s1"> </span><span class="s7">2px</span><span class="s1"> </span><span class="s8">solid</span><span class="s1"> </span><span class="s8">#333</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">box-shadow:</span><span class="s1"> </span><span class="s7">0</span><span class="s1"> </span><span class="s7">0</span><span class="s1"> </span><span class="s7">15px</span><span class="s1"> </span><span class="s8">rgba(</span><span class="s7">0</span><span class="s1">,</span><span class="s7">0</span><span class="s1">,</span><span class="s7">0</span><span class="s1">,</span><span class="s7">0.2</span><span class="s8">)</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s6">canvas</span><span class="s1"> {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">display:</span><span class="s1"> </span><span class="s8">block</span><span class="s1">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">background-color:</span><span class="s4"> </span><span class="s8">#fff</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s6">#ui-layer</span><span class="s1"> {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">position:</span><span class="s1"> </span><span class="s8">absolute</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">top:</span><span class="s1"> </span><span class="s7">0</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">left:</span><span class="s1"> </span><span class="s7">0</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">width:</span><span class="s1"> </span><span class="s7">100%</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">height:</span><span class="s1"> </span><span class="s7">100%</span><span class="s1">;</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s2">pointer-events:</span><span class="s4"> </span><span class="s8">none</span><span class="s4">; </span><span class="s1">/* Allows clicks to go through to the canvas if needed */</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">display:</span><span class="s1"> </span><span class="s8">flex</span><span class="s1">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">flex-direction:</span><span class="s4"> </span><span class="s8">column</span><span class="s4">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">justify-content:</span><span class="s4"> </span><span class="s8">center</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">align-items:</span><span class="s1"> </span><span class="s8">center</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">color:</span><span class="s1"> </span><span class="s8">#333</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">text-align:</span><span class="s1"> </span><span class="s8">center</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s6">.hidden</span><span class="s1"> {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">display:</span><span class="s1"> </span><span class="s8">none</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s6">h1</span><span class="s1"> {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">font-size:</span><span class="s1"> </span><span class="s7">3rem</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">margin:</span><span class="s1"> </span><span class="s7">0</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s6">p</span><span class="s1"> {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">font-size:</span><span class="s1"> </span><span class="s7">1.2rem</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">margin:</span><span class="s1"> </span><span class="s7">10px</span><span class="s1"> </span><span class="s7">0</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">#score-display</span><span class="s4"> {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">position:</span><span class="s1"> </span><span class="s8">absolute</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">top:</span><span class="s1"> </span><span class="s7">10px</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">left:</span><span class="s1"> </span><span class="s7">10px</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">font-size:</span><span class="s1"> </span><span class="s7">1.5rem</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">text-align:</span><span class="s1"> </span><span class="s8">left</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s1">style</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;/</span><span class="s1">head</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;</span><span class="s1">body</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">id</span><span class="s3">=</span><span class="s1">"game-container"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s6">canvas</span><span class="s4"> </span><span class="s2">id</span><span class="s3">=</span><span class="s1">"gameCanvas"</span><span class="s4"> </span><span class="s2">width</span><span class="s3">=</span><span class="s1">"800"</span><span class="s4"> </span><span class="s2">height</span><span class="s3">=</span><span class="s1">"600"</span><span class="s3">&gt;&lt;/</span><span class="s6">canvas</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">id</span><span class="s3">=</span><span class="s1">"ui-layer"</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">&lt;!-- Menu Screen --&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s1"> </span><span class="s2">id</span><span class="s3">=</span><span class="s5">"menu-screen"</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">h1</span><span class="s3">&gt;</span><span class="s1">Decline Runner</span><span class="s3">&lt;/</span><span class="s6">h1</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">p</span><span class="s3">&gt;</span><span class="s1">Press ENTER to Start</span><span class="s3">&lt;/</span><span class="s6">p</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">p</span><span class="s1"> </span><span class="s2">id</span><span class="s3">=</span><span class="s5">"menu-high-score"</span><span class="s3">&gt;</span><span class="s1">High Score: 0</span><span class="s3">&lt;/</span><span class="s6">p</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">&lt;!-- Game Over Screen --&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">id</span><span class="s3">=</span><span class="s1">"game-over-screen"</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"hidden"</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">h1</span><span class="s3">&gt;</span><span class="s1">Game Over</span><span class="s3">&lt;/</span><span class="s6">h1</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">p</span><span class="s1"> </span><span class="s2">id</span><span class="s3">=</span><span class="s5">"final-score"</span><span class="s3">&gt;</span><span class="s1">Your Score: 0</span><span class="s3">&lt;/</span><span class="s6">p</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">p</span><span class="s1"> </span><span class="s2">id</span><span class="s3">=</span><span class="s5">"game-over-high-score"</span><span class="s3">&gt;</span><span class="s1">High Score: 0</span><span class="s3">&lt;/</span><span class="s6">p</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">p</span><span class="s3">&gt;</span><span class="s1">Press ENTER to Restart</span><span class="s3">&lt;/</span><span class="s6">p</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">             </span></span><span class="s1">&lt;!-- Score Display during gameplay --&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">id</span><span class="s3">=</span><span class="s1">"score-display"</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"hidden"</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">p</span><span class="s3">&gt;</span><span class="s1">Score: </span><span class="s3">&lt;</span><span class="s6">span</span><span class="s1"> </span><span class="s2">id</span><span class="s3">=</span><span class="s5">"current-score"</span><span class="s3">&gt;</span><span class="s1">0</span><span class="s3">&lt;/</span><span class="s6">span</span><span class="s3">&gt;&lt;/</span><span class="s6">p</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">p</span><span class="s3">&gt;</span><span class="s1">High Score: </span><span class="s3">&lt;</span><span class="s6">span</span><span class="s1"> </span><span class="s2">id</span><span class="s3">=</span><span class="s5">"gameplay-high-score"</span><span class="s3">&gt;</span><span class="s1">0</span><span class="s3">&lt;/</span><span class="s6">span</span><span class="s3">&gt;&lt;/</span><span class="s6">p</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s1">script</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">const</span><span class="s1"> canvas = document.getElementById(</span><span class="s9">'gameCanvas'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">const</span><span class="s1"> ctx = canvas.getContext(</span><span class="s9">'2d'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">// UI Elements</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">const</span><span class="s1"> menuScreen = document.getElementById(</span><span class="s9">'menu-screen'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">const</span><span class="s1"> gameOverScreen = document.getElementById(</span><span class="s9">'game-over-screen'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">const</span><span class="s1"> scoreDisplay = document.getElementById(</span><span class="s9">'score-display'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">const</span><span class="s1"> menuHighScore = document.getElementById(</span><span class="s9">'menu-high-score'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">const</span><span class="s1"> gameOverHighScore = document.getElementById(</span><span class="s9">'game-over-high-score'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">const</span><span class="s1"> gameplayHighScore = document.getElementById(</span><span class="s9">'gameplay-high-score'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">const</span><span class="s1"> finalScore = document.getElementById(</span><span class="s9">'final-score'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">const</span><span class="s1"> currentScoreSpan = document.getElementById(</span><span class="s9">'current-score'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">class</span><span class="s1"> </span><span class="s12">Obstacle</span><span class="s1"> {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s11">constructor</span><span class="s1">(x, y) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.x = x;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.y = y;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.shapeType = [</span><span class="s9">'square'</span><span class="s1">, </span><span class="s9">'rectangle'</span><span class="s1">, </span><span class="s9">'triangle'</span><span class="s1">][</span><span class="s12">Math</span><span class="s1">.floor(</span><span class="s12">Math</span><span class="s1">.random() * </span><span class="s13">3</span><span class="s1">)];</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">let</span><span class="s1"> size, width, height;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">switch</span><span class="s1"> (</span><span class="s11">this</span><span class="s1">.shapeType) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s11">case</span><span class="s1"> </span><span class="s9">'square'</span><span class="s1">:</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>size = </span><span class="s13">30</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s11">this</span><span class="s1">.width = size;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s11">this</span><span class="s1">.height = size;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s11">break</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s11">case</span><span class="s1"> </span><span class="s9">'rectangle'</span><span class="s1">:</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>width = </span><span class="s13">45</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>height = </span><span class="s13">25</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s11">this</span><span class="s1">.width = width;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s11">this</span><span class="s1">.height = height;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s11">break</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s11">case</span><span class="s1"> </span><span class="s9">'triangle'</span><span class="s1">:</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>size = </span><span class="s13">35</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s11">this</span><span class="s1">.width = size;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s11">this</span><span class="s1">.height = size;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s11">break</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>draw() {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>ctx.fillStyle = </span><span class="s9">'#ff3232'</span><span class="s1">; </span><span class="s14">// Red</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">if</span><span class="s1"> (</span><span class="s11">this</span><span class="s1">.shapeType === </span><span class="s9">'square'</span><span class="s1"> || </span><span class="s11">this</span><span class="s1">.shapeType === </span><span class="s9">'rectangle'</span><span class="s1">) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>ctx.fillRect(</span><span class="s11">this</span><span class="s1">.x, </span><span class="s11">this</span><span class="s1">.y - </span><span class="s11">this</span><span class="s1">.height, </span><span class="s11">this</span><span class="s1">.width, </span><span class="s11">this</span><span class="s1">.height);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>} </span><span class="s11">else</span><span class="s1"> </span><span class="s11">if</span><span class="s1"> (</span><span class="s11">this</span><span class="s1">.shapeType === </span><span class="s9">'triangle'</span><span class="s1">) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>ctx.beginPath();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>ctx.moveTo(</span><span class="s11">this</span><span class="s1">.x, </span><span class="s11">this</span><span class="s1">.y - </span><span class="s11">this</span><span class="s1">.height); </span><span class="s14">// Top point</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>ctx.lineTo(</span><span class="s11">this</span><span class="s1">.x + </span><span class="s11">this</span><span class="s1">.width, </span><span class="s11">this</span><span class="s1">.y); </span><span class="s14">// Bottom right</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>ctx.lineTo(</span><span class="s11">this</span><span class="s1">.x, </span><span class="s11">this</span><span class="s1">.y); </span><span class="s14">// Bottom left</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>ctx.closePath();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>ctx.fill();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">class</span><span class="s1"> </span><span class="s12">Game</span><span class="s1"> {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s11">constructor</span><span class="s1">() {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.width = canvas.width;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.height = canvas.height;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s14">// Game settings</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.slopeAngle = </span><span class="s12">Math</span><span class="s1">.atan(</span><span class="s13">0.25</span><span class="s1">); </span><span class="s14">// ~14 degrees</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.groundYStart = </span><span class="s13">100</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.baseScrollSpeed = </span><span class="s13">3</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.maxScrollSpeed = </span><span class="s13">8</span><span class="s1">;</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s1">// Player properties</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.playerRadius = </span><span class="s13">20</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.gravity = </span><span class="s13">0.5</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.jumpStrength = -</span><span class="s13">12</span><span class="s1">;</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s1">// Obstacle properties</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.obstacleGap = </span><span class="s13">350</span><span class="s1">;</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.highScore = </span><span class="s11">this</span><span class="s1">.loadHighScore();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.gameState = </span><span class="s9">'menu'</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.init();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>init() {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.playerX = </span><span class="s13">100</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.playerY = </span><span class="s11">this</span><span class="s1">.getGroundY(</span><span class="s11">this</span><span class="s1">.playerX);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.playerVelY = </span><span class="s13">0</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.onGround = </span><span class="s11">true</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.score = </span><span class="s13">0</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.scrollSpeed = </span><span class="s11">this</span><span class="s1">.baseScrollSpeed;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.obstacles = [];</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">let</span><span class="s1"> lastX = </span><span class="s11">this</span><span class="s1">.width;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">for</span><span class="s1"> (</span><span class="s11">let</span><span class="s1"> i = </span><span class="s13">0</span><span class="s1">; i &lt; </span><span class="s13">5</span><span class="s1">; i++) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s11">const</span><span class="s1"> spawnX = lastX + </span><span class="s11">this</span><span class="s1">.obstacleGap + </span><span class="s12">Math</span><span class="s1">.random() * </span><span class="s13">400</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s11">const</span><span class="s1"> spawnY = </span><span class="s11">this</span><span class="s1">.getGroundY(spawnX);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s11">this</span><span class="s1">.obstacles.push(</span><span class="s11">new</span><span class="s1"> </span><span class="s12">Obstacle</span><span class="s1">(spawnX, spawnY));</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>lastX = spawnX;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.updateUI();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>getGroundY(xPos) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">return</span><span class="s1"> </span><span class="s11">this</span><span class="s1">.groundYStart + xPos * </span><span class="s12">Math</span><span class="s1">.tan(</span><span class="s11">this</span><span class="s1">.slopeAngle);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>loadHighScore() {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">return</span><span class="s1"> parseInt(localStorage.getItem(</span><span class="s9">'declineRunnerHighScore'</span><span class="s1">)) || </span><span class="s13">0</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>saveHighScore() {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>localStorage.setItem(</span><span class="s9">'declineRunnerHighScore'</span><span class="s1">, </span><span class="s11">this</span><span class="s1">.highScore);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>start() {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.gameState = </span><span class="s9">'playing'</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.init();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>gameLoop();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>update() {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">if</span><span class="s1"> (</span><span class="s11">this</span><span class="s1">.gameState !== </span><span class="s9">'playing'</span><span class="s1">) </span><span class="s11">return</span><span class="s1">;</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s1">// Difficulty Scaling</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.scrollSpeed = </span><span class="s12">Math</span><span class="s1">.min(</span><span class="s11">this</span><span class="s1">.maxScrollSpeed, </span><span class="s11">this</span><span class="s1">.baseScrollSpeed + </span><span class="s11">this</span><span class="s1">.score / </span><span class="s13">5</span><span class="s1">);</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s1">// Player Physics</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.playerVelY += </span><span class="s11">this</span><span class="s1">.gravity;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.playerY += </span><span class="s11">this</span><span class="s1">.playerVelY;</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">const</span><span class="s1"> groundY = </span><span class="s11">this</span><span class="s1">.getGroundY(</span><span class="s11">this</span><span class="s1">.playerX);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">if</span><span class="s1"> (</span><span class="s11">this</span><span class="s1">.playerY &gt;= groundY - </span><span class="s11">this</span><span class="s1">.playerRadius) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s11">this</span><span class="s1">.playerY = groundY - </span><span class="s11">this</span><span class="s1">.playerRadius;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s11">this</span><span class="s1">.playerVelY = </span><span class="s13">0</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s11">this</span><span class="s1">.onGround = </span><span class="s11">true</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s1">// Obstacle Update</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.obstacles.forEach(obstacle =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>obstacle.x -= </span><span class="s11">this</span><span class="s1">.scrollSpeed;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>});</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">if</span><span class="s1"> (</span><span class="s11">this</span><span class="s1">.obstacles[</span><span class="s13">0</span><span class="s1">].x + </span><span class="s11">this</span><span class="s1">.obstacles[</span><span class="s13">0</span><span class="s1">].width &lt; </span><span class="s13">0</span><span class="s1">) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s11">this</span><span class="s1">.obstacles.shift();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s11">const</span><span class="s1"> lastX = </span><span class="s11">this</span><span class="s1">.obstacles[</span><span class="s11">this</span><span class="s1">.obstacles.length - </span><span class="s13">1</span><span class="s1">].x;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s11">const</span><span class="s1"> spawnX = lastX + </span><span class="s11">this</span><span class="s1">.obstacleGap + </span><span class="s12">Math</span><span class="s1">.random() * </span><span class="s13">400</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s11">const</span><span class="s1"> spawnY = </span><span class="s11">this</span><span class="s1">.getGroundY(spawnX);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s11">this</span><span class="s1">.obstacles.push(</span><span class="s11">new</span><span class="s1"> </span><span class="s12">Obstacle</span><span class="s1">(spawnX, spawnY));</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s11">this</span><span class="s1">.score++;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s1">// Collision Detection</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">const</span><span class="s1"> playerRect = {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>x: </span><span class="s11">this</span><span class="s1">.playerX - </span><span class="s11">this</span><span class="s1">.playerRadius,</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>y: </span><span class="s11">this</span><span class="s1">.playerY - </span><span class="s11">this</span><span class="s1">.playerRadius,</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>width: </span><span class="s11">this</span><span class="s1">.playerRadius * </span><span class="s13">2</span><span class="s1">,</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>height: </span><span class="s11">this</span><span class="s1">.playerRadius * </span><span class="s13">2</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>};</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">for</span><span class="s1"> (</span><span class="s11">const</span><span class="s1"> obstacle </span><span class="s11">of</span><span class="s1"> </span><span class="s11">this</span><span class="s1">.obstacles) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s11">const</span><span class="s1"> obsRect = {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>x: obstacle.x,</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>y: obstacle.y - obstacle.height,</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>width: obstacle.width,</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>height: obstacle.height</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>};</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s11">if</span><span class="s1"> (playerRect.x &lt; obsRect.x + obsRect.width &amp;&amp;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>playerRect.x + playerRect.width &gt; obsRect.x &amp;&amp;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>playerRect.y &lt; obsRect.y + obsRect.height &amp;&amp;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>playerRect.y + playerRect.height &gt; obsRect.y) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s11">this</span><span class="s1">.gameState = </span><span class="s9">'gameOver'</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s11">if</span><span class="s1"> (</span><span class="s11">this</span><span class="s1">.score &gt; </span><span class="s11">this</span><span class="s1">.highScore) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s11">this</span><span class="s1">.highScore = </span><span class="s11">this</span><span class="s1">.score;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s11">this</span><span class="s1">.saveHighScore();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.updateUI();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>draw() {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>ctx.clearRect(</span><span class="s13">0</span><span class="s1">, </span><span class="s13">0</span><span class="s1">, </span><span class="s11">this</span><span class="s1">.width, </span><span class="s11">this</span><span class="s1">.height);</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s14">// Draw Platform</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>ctx.strokeStyle = </span><span class="s9">'#333'</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>ctx.lineWidth = </span><span class="s13">2</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>ctx.beginPath();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>ctx.moveTo(</span><span class="s13">0</span><span class="s1">, </span><span class="s11">this</span><span class="s1">.getGroundY(</span><span class="s13">0</span><span class="s1">));</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>ctx.lineTo(</span><span class="s11">this</span><span class="s1">.width, </span><span class="s11">this</span><span class="s1">.getGroundY(</span><span class="s11">this</span><span class="s1">.width));</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>ctx.stroke();</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s14">// Draw Player</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>ctx.fillStyle = </span><span class="s9">'#0064ff'</span><span class="s1">; </span><span class="s14">// Blue</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>ctx.beginPath();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>ctx.arc(</span><span class="s11">this</span><span class="s1">.playerX, </span><span class="s11">this</span><span class="s1">.playerY, </span><span class="s11">this</span><span class="s1">.playerRadius, </span><span class="s13">0</span><span class="s1">, </span><span class="s12">Math</span><span class="s1">.</span><span class="s12">PI</span><span class="s1"> * </span><span class="s13">2</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>ctx.fill();</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s1">// Draw Obstacles</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">this</span><span class="s1">.obstacles.forEach(obstacle =&gt; obstacle.draw());</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>updateUI() {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">if</span><span class="s1"> (</span><span class="s11">this</span><span class="s1">.gameState === </span><span class="s9">'menu'</span><span class="s1">) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>menuScreen.classList.remove(</span><span class="s9">'hidden'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>gameOverScreen.classList.add(</span><span class="s9">'hidden'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>scoreDisplay.classList.add(</span><span class="s9">'hidden'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>menuHighScore.textContent = </span><span class="s9">`High Score: </span><span class="s1">${</span><span class="s11">this</span><span class="s1">.highScore}</span><span class="s9">`</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>} </span><span class="s11">else</span><span class="s1"> </span><span class="s11">if</span><span class="s1"> (</span><span class="s11">this</span><span class="s1">.gameState === </span><span class="s9">'playing'</span><span class="s1">) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>menuScreen.classList.add(</span><span class="s9">'hidden'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>gameOverScreen.classList.add(</span><span class="s9">'hidden'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>scoreDisplay.classList.remove(</span><span class="s9">'hidden'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>currentScoreSpan.textContent = </span><span class="s11">this</span><span class="s1">.score;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>gameplayHighScore.textContent = </span><span class="s11">this</span><span class="s1">.highScore;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>} </span><span class="s11">else</span><span class="s1"> </span><span class="s11">if</span><span class="s1"> (</span><span class="s11">this</span><span class="s1">.gameState === </span><span class="s9">'gameOver'</span><span class="s1">) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>menuScreen.classList.add(</span><span class="s9">'hidden'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>gameOverScreen.classList.remove(</span><span class="s9">'hidden'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>scoreDisplay.classList.add(</span><span class="s9">'hidden'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>finalScore.textContent = </span><span class="s9">`Your Score: </span><span class="s1">${</span><span class="s11">this</span><span class="s1">.score}</span><span class="s9">`</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>gameOverHighScore.textContent = </span><span class="s9">`High Score: </span><span class="s1">${</span><span class="s11">this</span><span class="s1">.highScore}</span><span class="s9">`</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">const</span><span class="s1"> game = </span><span class="s11">new</span><span class="s1"> </span><span class="s12">Game</span><span class="s1">();</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s11">function</span><span class="s1"> gameLoop() {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s11">if</span><span class="s1"> (game.gameState === </span><span class="s9">'playing'</span><span class="s1">) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>game.update();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>game.draw();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>requestAnimationFrame(gameLoop);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>} </span><span class="s11">else</span><span class="s1"> {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>game.updateUI();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">        </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>window.addEventListener(</span><span class="s9">'keydown'</span><span class="s1">, (e) =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s11">if</span><span class="s1"> (game.gameState === </span><span class="s9">'playing'</span><span class="s1">) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">if</span><span class="s1"> (e.code === </span><span class="s9">'Space'</span><span class="s1"> &amp;&amp; game.onGround) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>game.playerVelY = game.jumpStrength;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>game.onGround = </span><span class="s11">false</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>} </span><span class="s11">else</span><span class="s1"> </span><span class="s11">if</span><span class="s1"> (game.gameState === </span><span class="s9">'menu'</span><span class="s1"> || game.gameState === </span><span class="s9">'gameOver'</span><span class="s1">) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s11">if</span><span class="s1"> (e.code === </span><span class="s9">'Enter'</span><span class="s1">) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>game.start();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>});</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p6"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">// Initial render</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>game.updateUI();</span></p>
-<p class="p5"><span class="s10"><br>
-</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s1">script</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;/</span><span class="s1">body</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;/</span><span class="s1">html</span><span class="s3">&gt;</span></p>
+    <div id="game-container">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div id="ui-layer">
+            <!-- Menu Screen -->
+            <div id="menu-screen">
+                <h1>Decline Runner</h1>
+                <p>Press ENTER to Start</p>
+                <p id="menu-high-score">High Score: 0</p>
+            </div>
+            <!-- Game Over Screen -->
+            <div id="game-over-screen" class="hidden">
+                <h1>Game Over</h1>
+                <p id="final-score">Your Score: 0</p>
+                <p id="game-over-high-score">High Score: 0</p>
+                <p>Press ENTER to Restart</p>
+            </div>
+             <!-- Score Display during gameplay -->
+            <div id="score-display" class="hidden">
+                <p>Score: <span id="current-score">0</span></p>
+                <p>High Score: <span id="gameplay-high-score">0</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // UI Elements
+        const menuScreen = document.getElementById('menu-screen');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const scoreDisplay = document.getElementById('score-display');
+        const menuHighScore = document.getElementById('menu-high-score');
+        const gameOverHighScore = document.getElementById('game-over-high-score');
+        const gameplayHighScore = document.getElementById('gameplay-high-score');
+        const finalScore = document.getElementById('final-score');
+        const currentScoreSpan = document.getElementById('current-score');
+
+        class Obstacle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.shapeType = ['square', 'rectangle', 'triangle'][Math.floor(Math.random() * 3)];
+                
+                let size, width, height;
+                switch (this.shapeType) {
+                    case 'square':
+                        size = 35;
+                        this.width = size;
+                        this.height = size;
+                        break;
+                    case 'rectangle':
+                        width = 50;
+                        height = 25;
+                        this.width = width;
+                        this.height = height;
+                        break;
+                    case 'triangle':
+                        size = 40;
+                        this.width = size;
+                        this.height = size;
+                        break;
+                }
+            }
+
+            update(scrollSpeed, groundYFunc) {
+                this.x -= scrollSpeed;
+                // **CRITICAL FIX**: Recalculate the Y position each frame to keep it on the slope
+                this.y = groundYFunc(this.x);
+            }
+
+            draw() {
+                ctx.fillStyle = '#ff3232'; // Red
+                if (this.shapeType === 'square' || this.shapeType === 'rectangle') {
+                    ctx.fillRect(this.x, this.y - this.height, this.width, this.height);
+                } else if (this.shapeType === 'triangle') {
+                    ctx.beginPath();
+                    ctx.moveTo(this.x + this.width / 2, this.y - this.height); // Top point
+                    ctx.lineTo(this.x + this.width, this.y); // Bottom right
+                    ctx.lineTo(this.x, this.y); // Bottom left
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            }
+        }
+
+        class Game {
+            constructor() {
+                this.width = canvas.width;
+                this.height = canvas.height;
+                
+                // Game settings
+                this.slopeAngle = Math.tan(30 * Math.PI / 180); // **CHANGE**: Much steeper angle
+                this.groundYStart = 100;
+                this.baseScrollSpeed = 4;
+                this.maxScrollSpeed = 10;
+                
+                // Player properties
+                this.playerX = 300; // **CHANGE**: More central POV
+                this.playerRadius = 20;
+                this.gravity = 0.6;
+                this.jumpStrength = -14;
+
+                // Obstacle properties
+                this.obstacleGap = 450;
+
+                this.highScore = this.loadHighScore();
+                this.gameState = 'menu';
+                this.init();
+            }
+
+            init() {
+                this.playerY = this.getGroundY(this.playerX);
+                this.playerVelY = 0;
+                this.onGround = true;
+                this.score = 0;
+                this.scrollSpeed = this.baseScrollSpeed;
+                this.obstacles = [];
+
+                let lastX = this.width;
+                for (let i = 0; i < 5; i++) {
+                    const spawnX = lastX + this.obstacleGap + Math.random() * 400;
+                    const spawnY = this.getGroundY(spawnX);
+                    this.obstacles.push(new Obstacle(spawnX, spawnY));
+                    lastX = spawnX;
+                }
+                this.updateUI();
+            }
+            
+            getGroundY(xPos) {
+                return this.groundYStart + xPos * this.slopeAngle;
+            }
+
+            loadHighScore() {
+                try {
+                    const score = localStorage.getItem('declineRunnerHighScore');
+                    return score ? parseInt(score) : 0;
+                } catch (e) {
+                    console.error("Could not load high score from localStorage.", e);
+                    return 0;
+                }
+            }
+
+            saveHighScore() {
+                try {
+                    localStorage.setItem('declineRunnerHighScore', this.highScore);
+                } catch (e) {
+                    console.error("Could not save high score to localStorage.", e);
+                }
+            }
+
+            start() {
+                this.gameState = 'playing';
+                this.init();
+                gameLoop();
+            }
+
+            update() {
+                if (this.gameState !== 'playing') return;
+
+                // Difficulty Scaling
+                this.scrollSpeed = Math.min(this.maxScrollSpeed, this.baseScrollSpeed + this.score / 5);
+
+                // Player Physics
+                this.playerVelY += this.gravity;
+                this.playerY += this.playerVelY;
+
+                const groundY = this.getGroundY(this.playerX);
+                if (this.playerY >= groundY - this.playerRadius) {
+                    this.playerY = groundY - this.playerRadius;
+                    this.playerVelY = 0;
+                    this.onGround = true;
+                }
+
+                // Obstacle Update
+                this.obstacles.forEach(obstacle => {
+                    obstacle.update(this.scrollSpeed, (x) => this.getGroundY(x));
+                });
+
+                if (this.obstacles[0].x + this.obstacles[0].width < 0) {
+                    this.obstacles.shift();
+                    const lastX = this.obstacles[this.obstacles.length - 1].x;
+                    const spawnX = lastX + this.obstacleGap + Math.random() * 400;
+                    const spawnY = this.getGroundY(spawnX);
+                    this.obstacles.push(new Obstacle(spawnX, spawnY));
+                    this.score++;
+                }
+
+                // Collision Detection
+                const playerRect = {
+                    x: this.playerX - this.playerRadius,
+                    y: this.playerY - this.playerRadius,
+                    width: this.playerRadius * 2,
+                    height: this.playerRadius * 2
+                };
+
+                for (const obstacle of this.obstacles) {
+                    const obsRect = {
+                        x: obstacle.x,
+                        y: obstacle.y - obstacle.height,
+                        width: obstacle.width,
+                        height: obstacle.height
+                    };
+                    if (playerRect.x < obsRect.x + obsRect.width &&
+                        playerRect.x + playerRect.width > obsRect.x &&
+                        playerRect.y < obsRect.y + obsRect.height &&
+                        playerRect.y + playerRect.height > obsRect.y) {
+                        this.gameState = 'gameOver';
+                        if (this.score > this.highScore) {
+                            this.highScore = this.score;
+                            this.saveHighScore();
+                        }
+                    }
+                }
+                this.updateUI();
+            }
+
+            draw() {
+                ctx.clearRect(0, 0, this.width, this.height);
+
+                // Draw Platform
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(0, this.getGroundY(0));
+                ctx.lineTo(this.width, this.getGroundY(this.width));
+                ctx.stroke();
+
+                // Draw Player
+                ctx.fillStyle = '#0064ff'; // Blue
+                ctx.beginPath();
+                ctx.arc(this.playerX, this.playerY, this.playerRadius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw Obstacles
+                this.obstacles.forEach(obstacle => obstacle.draw());
+            }
+            
+            updateUI() {
+                if (this.gameState === 'menu') {
+                    menuScreen.classList.remove('hidden');
+                    gameOverScreen.classList.add('hidden');
+                    scoreDisplay.classList.add('hidden');
+                    menuHighScore.textContent = `High Score: ${this.highScore}`;
+                } else if (this.gameState === 'playing') {
+                    menuScreen.classList.add('hidden');
+                    gameOverScreen.classList.add('hidden');
+                    scoreDisplay.classList.remove('hidden');
+                    currentScoreSpan.textContent = this.score;
+                    gameplayHighScore.textContent = this.highScore;
+                } else if (this.gameState === 'gameOver') {
+                    menuScreen.classList.add('hidden');
+                    gameOverScreen.classList.remove('hidden');
+                    scoreDisplay.classList.add('hidden');
+                    finalScore.textContent = `Your Score: ${this.score}`;
+                    gameOverHighScore.textContent = `High Score: ${this.highScore}`;
+                }
+            }
+        }
+
+        const game = new Game();
+
+        function gameLoop() {
+            if (game.gameState === 'playing') {
+                game.update();
+                game.draw();
+                requestAnimationFrame(gameLoop);
+            } else {
+                game.updateUI();
+            }
+        }
+        
+        window.addEventListener('keydown', (e) => {
+            if (game.gameState === 'playing') {
+                if (e.code === 'Space' && game.onGround) {
+                    game.playerVelY = game.jumpStrength;
+                    game.onGround = false;
+                }
+            } else if (game.gameState === 'menu' || game.gameState === 'gameOver') {
+                if (e.code === 'Enter') {
+                    game.start();
+                }
+            }
+        });
+
+        // Initial render
+        game.updateUI();
+
+    </script>
 </body>
 </html>

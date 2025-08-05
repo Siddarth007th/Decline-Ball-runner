@@ -22,7 +22,7 @@
         }
         canvas {
             display: block;
-            background-color: #fff;
+            background-color: #fff; /* This ensures the game background is white */
         }
         #ui-layer {
             position: absolute;
@@ -82,11 +82,11 @@
             </div>
         </div>
     </div>
- 
+
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
- 
+
         // UI Elements
         const menuScreen = document.getElementById('menu-screen');
         const gameOverScreen = document.getElementById('game-over-screen');
@@ -96,7 +96,7 @@
         const gameplayHighScore = document.getElementById('gameplay-high-score');
         const finalScore = document.getElementById('final-score');
         const currentScoreSpan = document.getElementById('current-score');
- 
+
         class Obstacle {
             constructor(x, y) {
                 this.x = x;
@@ -123,7 +123,7 @@
                         break;
                 }
             }
- 
+
             draw() {
                 ctx.fillStyle = '#ff3232'; // Red
                 if (this.shapeType === 'square' || this.shapeType === 'rectangle') {
@@ -138,7 +138,7 @@
                 }
             }
         }
- 
+
         class Game {
             constructor() {
                 this.width = canvas.width;
@@ -154,15 +154,15 @@
                 this.playerRadius = 20;
                 this.gravity = 0.5;
                 this.jumpStrength = -12;
- 
+
                 // Obstacle properties
                 this.obstacleGap = 350;
- 
+
                 this.highScore = this.loadHighScore();
                 this.gameState = 'menu';
                 this.init();
             }
- 
+
             init() {
                 this.playerX = 100;
                 this.playerY = this.getGroundY(this.playerX);
@@ -171,7 +171,7 @@
                 this.score = 0;
                 this.scrollSpeed = this.baseScrollSpeed;
                 this.obstacles = [];
- 
+
                 let lastX = this.width;
                 for (let i = 0; i < 5; i++) {
                     const spawnX = lastX + this.obstacleGap + Math.random() * 400;
@@ -185,43 +185,43 @@
             getGroundY(xPos) {
                 return this.groundYStart + xPos * Math.tan(this.slopeAngle);
             }
- 
+
             loadHighScore() {
                 return parseInt(localStorage.getItem('declineRunnerHighScore')) || 0;
             }
- 
+
             saveHighScore() {
                 localStorage.setItem('declineRunnerHighScore', this.highScore);
             }
- 
+
             start() {
                 this.gameState = 'playing';
                 this.init();
                 gameLoop();
             }
- 
+
             update() {
                 if (this.gameState !== 'playing') return;
- 
+
                 // Difficulty Scaling
                 this.scrollSpeed = Math.min(this.maxScrollSpeed, this.baseScrollSpeed + this.score / 5);
- 
+
                 // Player Physics
                 this.playerVelY += this.gravity;
                 this.playerY += this.playerVelY;
- 
+
                 const groundY = this.getGroundY(this.playerX);
                 if (this.playerY >= groundY - this.playerRadius) {
                     this.playerY = groundY - this.playerRadius;
                     this.playerVelY = 0;
                     this.onGround = true;
                 }
- 
+
                 // Obstacle Update
                 this.obstacles.forEach(obstacle => {
                     obstacle.x -= this.scrollSpeed;
                 });
- 
+
                 if (this.obstacles[0].x + this.obstacles[0].width < 0) {
                     this.obstacles.shift();
                     const lastX = this.obstacles[this.obstacles.length - 1].x;
@@ -230,7 +230,7 @@
                     this.obstacles.push(new Obstacle(spawnX, spawnY));
                     this.score++;
                 }
- 
+
                 // Collision Detection
                 const playerRect = {
                     x: this.playerX - this.playerRadius,
@@ -238,7 +238,7 @@
                     width: this.playerRadius * 2,
                     height: this.playerRadius * 2
                 };
- 
+
                 for (const obstacle of this.obstacles) {
                     const obsRect = {
                         x: obstacle.x,
@@ -259,10 +259,10 @@
                 }
                 this.updateUI();
             }
- 
+
             draw() {
                 ctx.clearRect(0, 0, this.width, this.height);
- 
+
                 // Draw Platform
                 ctx.strokeStyle = '#333';
                 ctx.lineWidth = 2;
@@ -270,13 +270,13 @@
                 ctx.moveTo(0, this.getGroundY(0));
                 ctx.lineTo(this.width, this.getGroundY(this.width));
                 ctx.stroke();
- 
+
                 // Draw Player
                 ctx.fillStyle = '#0064ff'; // Blue
                 ctx.beginPath();
                 ctx.arc(this.playerX, this.playerY, this.playerRadius, 0, Math.PI * 2);
                 ctx.fill();
- 
+
                 // Draw Obstacles
                 this.obstacles.forEach(obstacle => obstacle.draw());
             }
@@ -302,9 +302,9 @@
                 }
             }
         }
- 
+
         const game = new Game();
- 
+
         function gameLoop() {
             if (game.gameState === 'playing') {
                 game.update();
@@ -327,10 +327,10 @@
                 }
             }
         });
- 
+
         // Initial render
         game.updateUI();
- 
+
     </script>
 </body>
 </html>

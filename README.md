@@ -151,12 +151,13 @@
                 this.height = canvas.height;
                 
                 // Game settings
-                this.slopeAngle = Math.atan(0.25); // ~14 degrees
+                this.slopeAngle = Math.atan(0.4); // ~22 degrees - Steeper slope
                 this.groundYStart = 100;
                 this.baseScrollSpeed = 3;
-                this.maxScrollSpeed = 8;
+                this.maxScrollSpeed = 9;
                 
                 // Player properties
+                this.playerX = 250; // More central POV
                 this.playerRadius = 20;
                 this.gravity = 0.5;
                 this.jumpStrength = -12;
@@ -170,7 +171,6 @@
             }
 
             init() {
-                this.playerX = 100;
                 this.playerY = this.getGroundY(this.playerX);
                 this.playerVelY = 0;
                 this.onGround = true;

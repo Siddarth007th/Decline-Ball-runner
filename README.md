@@ -65,7 +65,7 @@
             <!-- Menu Screen -->
             <div id="menu-screen">
                 <h1>Decline Runner</h1>
-                <p>Press ENTER to Start</p>
+                <p>Press ENTER or Tap to Start</p>
                 <p id="menu-high-score">High Score: 0</p>
             </div>
             <!-- Game Over Screen -->
@@ -73,7 +73,7 @@
                 <h1>Game Over</h1>
                 <p id="final-score">Your Score: 0</p>
                 <p id="game-over-high-score">High Score: 0</p>
-                <p>Press ENTER to Restart</p>
+                <p>Press ENTER or Tap to Restart</p>
             </div>
              <!-- Score Display during gameplay -->
             <div id="score-display" class="hidden">
@@ -239,7 +239,7 @@
                     obstacle.update(this.scrollSpeed, (x) => this.getGroundY(x));
                 });
 
-                if (this.obstacles[0].x + this.obstacles[0].width < 0) {
+                if (this.obstacles.length > 0 && this.obstacles[0].x + this.obstacles[0].width < 0) {
                     this.obstacles.shift();
                     const lastX = this.obstacles[this.obstacles.length - 1].x;
                     const spawnX = lastX + this.obstacleGap + Math.random() * 500;
@@ -330,18 +330,30 @@
             }
         }
         
-        window.addEventListener('keydown', (e) => {
+        // --- Input Handling ---
+        function handleInput() {
             if (game.gameState === 'playing') {
-                if (e.code === 'Space' && game.onGround) {
+                if (game.onGround) {
                     game.playerVelY = game.jumpStrength;
                     game.onGround = false;
                 }
             } else if (game.gameState === 'menu' || game.gameState === 'gameOver') {
-                if (e.code === 'Enter') {
-                    game.start();
-                }
+                game.start();
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.code === 'Enter') {
+                handleInput();
             }
         });
+        
+        // Add touch support
+        window.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevents screen from moving on tap
+            handleInput();
+        }, { passive: false });
+
 
         // Initial render
         game.updateUI();

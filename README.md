@@ -10,7 +10,7 @@ class Obstacle:
         self.x = x
         self.y = y
         self.shape_type = random.choice(['square', 'rectangle', 'triangle'])
-        
+
         # Define size based on shape
         if self.shape_type == 'square':
             size = 30
@@ -20,8 +20,7 @@ class Obstacle:
             self.rect = pygame.Rect(x, y - height, width, height)
         elif self.shape_type == 'triangle':
             size = 35
-            # Bounding box for collision detection
-            self.rect = pygame.Rect(x, y - size, size, size)
+            self.rect = pygame.Rect(x, y - size, size, size) # Bounding box for collision
 
     def draw(self, surface, color):
         """Draws the obstacle based on its shape."""
@@ -29,16 +28,16 @@ class Obstacle:
             pygame.draw.rect(surface, color, self.rect)
         elif self.shape_type == 'triangle':
             # Define points for an upward-pointing triangle
-            p1 = self.rect.midtop
+            p1 = self.rect.bottomleft
             p2 = self.rect.bottomright
-            p3 = self.rect.bottomleft
+            p3 = (self.rect.centerx, self.rect.top)
             pygame.draw.polygon(surface, color, [p1, p2, p3])
 
     def update_pos(self, scroll_speed, ground_y_func):
         """Updates the obstacle's position as it scrolls."""
         self.x -= scroll_speed
         self.rect.x = int(self.x)
-        # Keep the obstacle's bottom on the slope
+        # Keep the obstacle on the slope
         self.rect.bottom = int(ground_y_func(self.x))
 
 
@@ -61,23 +60,22 @@ class Game:
         self.black = (0, 0, 0)
 
         # Fonts
-        self.font = pygame.font.SysFont(None, 60)
+        self.font = pygame.font.SysFont(None, 48)
         self.small_font = pygame.font.SysFont(None, 36)
 
         # Game settings
-        self.slope_angle = math.radians(22) # Steeper angle
-        self.ground_y_start = 120 # Starting y-pos at the left edge
-        self.base_scroll_speed = 3.5
-        self.max_scroll_speed = 9
-        
+        self.slope_angle = math.radians(15) # Positive angle for decline
+        self.ground_y_start = 100 # Starting y-pos at the left edge
+        self.base_scroll_speed = 3
+        self.max_scroll_speed = 8
+
         # Player properties
-        self.player_x = 250 # More central POV
         self.player_radius = 20
         self.gravity = 0.5
-        self.jump_strength = -13
+        self.jump_strength = -12
 
         # Obstacle properties
-        self.obstacle_gap = 400  # Base distance between obstacles
+        self.obstacle_gap = 350  # Base distance between obstacles
 
         # High score
         self.high_score = self.load_high_score()
@@ -110,17 +108,18 @@ class Game:
 
     def reset_game(self):
         """Resets all variables for a new game."""
+        self.player_x = 100
         self.player_y = self.get_ground_y(self.player_x)
         self.player_vel_y = 0
         self.on_ground = True
         self.score = 0
         self.scroll_speed = self.base_scroll_speed
         self.obstacles = []
-        
+
         # Pre-populate obstacles off-screen
         last_x = self.width
         for _ in range(5):
-            spawn_x = last_x + self.obstacle_gap + random.randint(100, 400)
+            spawn_x = last_x + self.obstacle_gap + random.randint(50, 400)
             spawn_y = self.get_ground_y(spawn_x)
             self.obstacles.append(Obstacle(spawn_x, spawn_y))
             last_x = spawn_x
@@ -156,7 +155,7 @@ class Game:
             return
 
         # --- Difficulty Scaling ---
-        self.scroll_speed = min(self.max_scroll_speed, self.base_scroll_speed + self.score / 5)
+        self.scroll_speed = min(self.max_scroll_speed, self.base_scroll_speed + self.score // 5)
 
         # --- Physics and Player Update ---
         self.player_vel_y += self.gravity
@@ -164,7 +163,7 @@ class Game:
 
         # Calculate ground y-position directly under the player
         ground_y = self.get_ground_y(self.player_x)
-        
+
         # Check for landing on the ground
         if self.player_y >= ground_y - self.player_radius:
             self.player_y = ground_y - self.player_radius
@@ -174,12 +173,12 @@ class Game:
         # --- Obstacle Update ---
         for obstacle in self.obstacles:
             obstacle.update_pos(self.scroll_speed, self.get_ground_y)
-        
+
         # Remove off-screen obstacles and add new ones
         if self.obstacles and self.obstacles[0].rect.right < 0:
             self.obstacles.pop(0)
             last_x = self.obstacles[-1].x
-            spawn_x = last_x + self.obstacle_gap + random.randint(100, 400)
+            spawn_x = last_x + self.obstacle_gap + random.randint(50, 400)
             spawn_y = self.get_ground_y(spawn_x)
             self.obstacles.append(Obstacle(spawn_x, spawn_y))
             self.score += 1
@@ -209,17 +208,19 @@ class Game:
         # --- Draw the declining platform ---
         start_pos = (0, self.get_ground_y(0))
         end_pos = (self.width, self.get_ground_y(self.width))
-        pygame.draw.line(self.screen, self.black, start_pos, end_pos, 3)
+        pygame.draw.line(self.screen, self.black, start_pos, end_pos, 2)
+
 
         # --- Draw Player and Obstacles ---
         if self.game_state == 'playing':
             pygame.draw.circle(self.screen, self.blue, (int(self.player_x), int(self.player_y)), self.player_radius)
             for obstacle in self.obstacles:
                 obstacle.draw(self.screen, self.red)
-            
+
             # Draw score
             self.draw_text(f"Score: {self.score}", self.small_font, 10, 10, self.black)
             self.draw_text(f"High Score: {self.high_score}", self.small_font, 10, 40, self.black)
+
 
         # --- Draw UI Screens ---
         if self.game_state == 'menu':

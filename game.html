@@ -126,22 +126,29 @@
 
             update(scrollSpeed, groundYFunc) {
                 this.x -= scrollSpeed;
-                // **CRITICAL FIX**: Recalculate the Y position each frame to keep it on the slope
-                this.y = groundYFunc(this.x);
+                // **CRITICAL FIX**: The y-coordinate must be calculated from the obstacle's CENTER for correct rotation alignment.
+                this.y = groundYFunc(this.x + this.width / 2);
             }
 
-            draw() {
-                ctx.fillStyle = '#ff3232'; // Red
+            draw(slopeAngleInRadians) {
+                ctx.save();
+                ctx.fillStyle = '#ff3232';
+                // Translate to the center of the obstacle's base to rotate around it
+                ctx.translate(this.x + this.width / 2, this.y);
+                ctx.rotate(slopeAngleInRadians);
+
                 if (this.shapeType === 'square' || this.shapeType === 'rectangle') {
-                    ctx.fillRect(this.x, this.y - this.height, this.width, this.height);
+                    // Draw relative to the new, rotated origin
+                    ctx.fillRect(-this.width / 2, -this.height, this.width, this.height);
                 } else if (this.shapeType === 'triangle') {
                     ctx.beginPath();
-                    ctx.moveTo(this.x + this.width / 2, this.y - this.height); // Top point
-                    ctx.lineTo(this.x + this.width, this.y); // Bottom right
-                    ctx.lineTo(this.x, this.y); // Bottom left
+                    ctx.moveTo(0, -this.height); // Top point
+                    ctx.lineTo(this.width / 2, 0); // Bottom right
+                    ctx.lineTo(-this.width / 2, 0); // Bottom left
                     ctx.closePath();
                     ctx.fill();
                 }
+                ctx.restore();
             }
         }
 
@@ -150,20 +157,17 @@
                 this.width = canvas.width;
                 this.height = canvas.height;
                 
-                // Game settings
-                this.slopeAngle = Math.tan(30 * Math.PI / 180); // **CHANGE**: Much steeper angle
+                this.slopeAngleInRadians = 30 * Math.PI / 180;
                 this.groundYStart = 100;
                 this.baseScrollSpeed = 4;
                 this.maxScrollSpeed = 10;
                 
-                // Player properties
-                this.playerX = 300; // **CHANGE**: More central POV
+                this.playerX = 300;
                 this.playerRadius = 20;
                 this.gravity = 0.6;
                 this.jumpStrength = -14;
 
-                // Obstacle properties
-                this.obstacleGap = 450;
+                this.obstacleGap = 400; // Base distance
 
                 this.highScore = this.loadHighScore();
                 this.gameState = 'menu';
@@ -180,7 +184,7 @@
 
                 let lastX = this.width;
                 for (let i = 0; i < 5; i++) {
-                    const spawnX = lastX + this.obstacleGap + Math.random() * 400;
+                    const spawnX = lastX + this.obstacleGap + Math.random() * 500;
                     const spawnY = this.getGroundY(spawnX);
                     this.obstacles.push(new Obstacle(spawnX, spawnY));
                     lastX = spawnX;
@@ -189,7 +193,7 @@
             }
             
             getGroundY(xPos) {
-                return this.groundYStart + xPos * this.slopeAngle;
+                return this.groundYStart + xPos * Math.tan(this.slopeAngleInRadians);
             }
 
             loadHighScore() {
@@ -197,7 +201,7 @@
                     const score = localStorage.getItem('declineRunnerHighScore');
                     return score ? parseInt(score) : 0;
                 } catch (e) {
-                    console.error("Could not load high score from localStorage.", e);
+                    console.error("Could not load high score.", e);
                     return 0;
                 }
             }
@@ -206,7 +210,7 @@
                 try {
                     localStorage.setItem('declineRunnerHighScore', this.highScore);
                 } catch (e) {
-                    console.error("Could not save high score to localStorage.", e);
+                    console.error("Could not save high score.", e);
                 }
             }
 
@@ -219,10 +223,8 @@
             update() {
                 if (this.gameState !== 'playing') return;
 
-                // Difficulty Scaling
                 this.scrollSpeed = Math.min(this.maxScrollSpeed, this.baseScrollSpeed + this.score / 5);
 
-                // Player Physics
                 this.playerVelY += this.gravity;
                 this.playerY += this.playerVelY;
 
@@ -233,7 +235,6 @@
                     this.onGround = true;
                 }
 
-                // Obstacle Update
                 this.obstacles.forEach(obstacle => {
                     obstacle.update(this.scrollSpeed, (x) => this.getGroundY(x));
                 });
@@ -241,36 +242,42 @@
                 if (this.obstacles[0].x + this.obstacles[0].width < 0) {
                     this.obstacles.shift();
                     const lastX = this.obstacles[this.obstacles.length - 1].x;
-                    const spawnX = lastX + this.obstacleGap + Math.random() * 400;
+                    const spawnX = lastX + this.obstacleGap + Math.random() * 500;
                     const spawnY = this.getGroundY(spawnX);
                     this.obstacles.push(new Obstacle(spawnX, spawnY));
                     this.score++;
                 }
 
-                // Collision Detection
-                const playerRect = {
-                    x: this.playerX - this.playerRadius,
-                    y: this.playerY - this.playerRadius,
-                    width: this.playerRadius * 2,
-                    height: this.playerRadius * 2
-                };
-
+                // Accurate collision detection for rotated obstacles.
                 for (const obstacle of this.obstacles) {
-                    const obsRect = {
-                        x: obstacle.x,
-                        y: obstacle.y - obstacle.height,
-                        width: obstacle.width,
-                        height: obstacle.height
-                    };
-                    if (playerRect.x < obsRect.x + obsRect.width &&
-                        playerRect.x + playerRect.width > obsRect.x &&
-                        playerRect.y < obsRect.y + obsRect.height &&
-                        playerRect.y + playerRect.height > obsRect.y) {
+                    const rotationPointX = obstacle.x + obstacle.width / 2;
+                    const rotationPointY = obstacle.y;
+                    const relativePlayerX = this.playerX - rotationPointX;
+                    const relativePlayerY = this.playerY - rotationPointY;
+
+                    const angle = -this.slopeAngleInRadians;
+                    const rotatedPlayerX = relativePlayerX * Math.cos(angle) - relativePlayerY * Math.sin(angle);
+                    const rotatedPlayerY = relativePlayerX * Math.sin(angle) + relativePlayerY * Math.cos(angle);
+
+                    const obstacleLeft = -obstacle.width / 2;
+                    const obstacleRight = obstacle.width / 2;
+                    const obstacleTop = -obstacle.height;
+                    const obstacleBottom = 0;
+
+                    let closestX = Math.max(obstacleLeft, Math.min(rotatedPlayerX, obstacleRight));
+                    let closestY = Math.max(obstacleTop, Math.min(rotatedPlayerY, obstacleBottom));
+
+                    const distanceX = rotatedPlayerX - closestX;
+                    const distanceY = rotatedPlayerY - closestY;
+                    const distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+
+                    if (distanceSquared < (this.playerRadius * this.playerRadius)) {
                         this.gameState = 'gameOver';
                         if (this.score > this.highScore) {
                             this.highScore = this.score;
                             this.saveHighScore();
                         }
+                        break; // Exit loop after first collision
                     }
                 }
                 this.updateUI();
@@ -279,7 +286,6 @@
             draw() {
                 ctx.clearRect(0, 0, this.width, this.height);
 
-                // Draw Platform
                 ctx.strokeStyle = '#333';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
@@ -287,32 +293,25 @@
                 ctx.lineTo(this.width, this.getGroundY(this.width));
                 ctx.stroke();
 
-                // Draw Player
-                ctx.fillStyle = '#0064ff'; // Blue
+                ctx.fillStyle = '#0064ff';
                 ctx.beginPath();
                 ctx.arc(this.playerX, this.playerY, this.playerRadius, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Draw Obstacles
-                this.obstacles.forEach(obstacle => obstacle.draw());
+                this.obstacles.forEach(obstacle => obstacle.draw(this.slopeAngleInRadians));
             }
             
             updateUI() {
+                menuScreen.classList.toggle('hidden', this.gameState !== 'menu');
+                gameOverScreen.classList.toggle('hidden', this.gameState !== 'gameOver');
+                scoreDisplay.classList.toggle('hidden', this.gameState !== 'playing');
+
                 if (this.gameState === 'menu') {
-                    menuScreen.classList.remove('hidden');
-                    gameOverScreen.classList.add('hidden');
-                    scoreDisplay.classList.add('hidden');
                     menuHighScore.textContent = `High Score: ${this.highScore}`;
                 } else if (this.gameState === 'playing') {
-                    menuScreen.classList.add('hidden');
-                    gameOverScreen.classList.add('hidden');
-                    scoreDisplay.classList.remove('hidden');
                     currentScoreSpan.textContent = this.score;
                     gameplayHighScore.textContent = this.highScore;
                 } else if (this.gameState === 'gameOver') {
-                    menuScreen.classList.add('hidden');
-                    gameOverScreen.classList.remove('hidden');
-                    scoreDisplay.classList.add('hidden');
                     finalScore.textContent = `Your Score: ${this.score}`;
                     gameOverHighScore.textContent = `High Score: ${this.highScore}`;
                 }

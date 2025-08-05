@@ -128,4 +128,68 @@
         const lastX = obstacles[obstacles.length - 1].x;
         const newX = lastX + obstacleGap + Math.random() * 400;
         obstacles.push({
-          x:
+          x: newX,
+          width: 30 + Math.random() * 20,
+          height: 30 + Math.random() * 10,
+        });
+        score++;
+      }
+
+      // Collision
+      for (let obs of obstacles) {
+        const obsY = getGroundY(obs.x);
+        if (
+          playerX + playerRadius > obs.x &&
+          playerX - playerRadius < obs.x + obs.width &&
+          playerY + playerRadius > obsY - obs.height
+        ) {
+          gameState = "game_over";
+          if (score > highScore) highScore = score;
+        }
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+      drawGround();
+
+      if (gameState === "playing") {
+        drawPlayer();
+        drawObstacles();
+        drawText(`Score: ${score}`, 10, 30);
+        drawText(`High Score: ${highScore}`, 10, 60);
+      }
+
+      if (gameState === "menu") {
+        drawText("Press ENTER to Start", width / 2 - 120, height / 2);
+      }
+
+      if (gameState === "game_over") {
+        drawText("Game Over!", width / 2 - 70, height / 2 - 40, "32px");
+        drawText(`Score: ${score}`, width / 2 - 50, height / 2);
+        drawText("Press ENTER to Restart", width / 2 - 110, height / 2 + 40);
+      }
+    }
+
+    function gameLoop() {
+      update();
+      draw();
+      requestAnimationFrame(gameLoop);
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Enter") {
+        resetGame();
+        gameState = "playing";
+      }
+      if (e.code === "Space" && gameState === "playing" && onGround) {
+        playerVelY = jumpStrength;
+        onGround = false;
+      }
+    });
+
+    gameLoop();
+  </script>
+</body>
+</html>
+

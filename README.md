@@ -124,13 +124,19 @@
                 }
             }
 
+            update(scrollSpeed, groundYFunc) {
+                this.x -= scrollSpeed;
+                // Recalculate the Y position each frame to keep it on the slope
+                this.y = groundYFunc(this.x);
+            }
+
             draw() {
                 ctx.fillStyle = '#ff3232'; // Red
                 if (this.shapeType === 'square' || this.shapeType === 'rectangle') {
                     ctx.fillRect(this.x, this.y - this.height, this.width, this.height);
                 } else if (this.shapeType === 'triangle') {
                     ctx.beginPath();
-                    ctx.moveTo(this.x, this.y - this.height); // Top point
+                    ctx.moveTo(this.x + this.width / 2, this.y - this.height); // Top point
                     ctx.lineTo(this.x + this.width, this.y); // Bottom right
                     ctx.lineTo(this.x, this.y); // Bottom left
                     ctx.closePath();
@@ -187,11 +193,21 @@
             }
 
             loadHighScore() {
-                return parseInt(localStorage.getItem('declineRunnerHighScore')) || 0;
+                try {
+                    const score = localStorage.getItem('declineRunnerHighScore');
+                    return score ? parseInt(score) : 0;
+                } catch (e) {
+                    console.error("Could not load high score from localStorage.", e);
+                    return 0;
+                }
             }
 
             saveHighScore() {
-                localStorage.setItem('declineRunnerHighScore', this.highScore);
+                try {
+                    localStorage.setItem('declineRunnerHighScore', this.highScore);
+                } catch (e) {
+                    console.error("Could not save high score to localStorage.", e);
+                }
             }
 
             start() {
@@ -219,7 +235,7 @@
 
                 // Obstacle Update
                 this.obstacles.forEach(obstacle => {
-                    obstacle.x -= this.scrollSpeed;
+                    obstacle.update(this.scrollSpeed, (x) => this.getGroundY(x));
                 });
 
                 if (this.obstacles[0].x + this.obstacles[0].width < 0) {

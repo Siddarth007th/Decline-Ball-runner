@@ -1,352 +1,240 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Decline Runner</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-            font-family: 'Arial', sans-serif;
-        }
-        #game-container {
-            position: relative;
-            border: 2px solid #333;
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-        }
-        canvas {
-            display: block;
-            background-color: #fff; /* This ensures the game background is white */
-        }
-        #ui-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none; /* Allows clicks to go through to the canvas if needed */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: #333;
-            text-align: center;
-        }
-        .hidden {
-            display: none;
-        }
-        h1 {
-            font-size: 3rem;
-            margin: 0;
-        }
-        p {
-            font-size: 1.2rem;
-            margin: 10px 0;
-        }
-        #score-display {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 1.5rem;
-            text-align: left;
-        }
-    </style>
-</head>
-<body>
-    <div id="game-container">
-        <canvas id="gameCanvas" width="800" height="600"></canvas>
-        <div id="ui-layer">
-            <!-- Menu Screen -->
-            <div id="menu-screen">
-                <h1>Decline Runner</h1>
-                <p>Press ENTER to Start</p>
-                <p id="menu-high-score">High Score: 0</p>
-            </div>
-            <!-- Game Over Screen -->
-            <div id="game-over-screen" class="hidden">
-                <h1>Game Over</h1>
-                <p id="final-score">Your Score: 0</p>
-                <p id="game-over-high-score">High Score: 0</p>
-                <p>Press ENTER to Restart</p>
-            </div>
-             <!-- Score Display during gameplay -->
-            <div id="score-display" class="hidden">
-                <p>Score: <span id="current-score">0</span></p>
-                <p>High Score: <span id="gameplay-high-score">0</span></p>
-            </div>
-        </div>
-    </div>
+import pygame
+import sys
+import random
+import math
+import os
 
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-
-        // UI Elements
-        const menuScreen = document.getElementById('menu-screen');
-        const gameOverScreen = document.getElementById('game-over-screen');
-        const scoreDisplay = document.getElementById('score-display');
-        const menuHighScore = document.getElementById('menu-high-score');
-        const gameOverHighScore = document.getElementById('game-over-high-score');
-        const gameplayHighScore = document.getElementById('gameplay-high-score');
-        const finalScore = document.getElementById('final-score');
-        const currentScoreSpan = document.getElementById('current-score');
-
-        class Obstacle {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.shapeType = ['square', 'rectangle', 'triangle'][Math.floor(Math.random() * 3)];
-                
-                let size, width, height;
-                switch (this.shapeType) {
-                    case 'square':
-                        size = 30;
-                        this.width = size;
-                        this.height = size;
-                        break;
-                    case 'rectangle':
-                        width = 45;
-                        height = 25;
-                        this.width = width;
-                        this.height = height;
-                        break;
-                    case 'triangle':
-                        size = 35;
-                        this.width = size;
-                        this.height = size;
-                        break;
-                }
-            }
-
-            update(scrollSpeed, groundYFunc) {
-                this.x -= scrollSpeed;
-                // Recalculate the Y position each frame to keep it on the slope
-                this.y = groundYFunc(this.x);
-            }
-
-            draw() {
-                ctx.fillStyle = '#ff3232'; // Red
-                if (this.shapeType === 'square' || this.shapeType === 'rectangle') {
-                    ctx.fillRect(this.x, this.y - this.height, this.width, this.height);
-                } else if (this.shapeType === 'triangle') {
-                    ctx.beginPath();
-                    ctx.moveTo(this.x + this.width / 2, this.y - this.height); // Top point
-                    ctx.lineTo(this.x + this.width, this.y); // Bottom right
-                    ctx.lineTo(this.x, this.y); // Bottom left
-                    ctx.closePath();
-                    ctx.fill();
-                }
-            }
-        }
-
-        class Game {
-            constructor() {
-                this.width = canvas.width;
-                this.height = canvas.height;
-                
-                // Game settings
-                this.slopeAngle = Math.atan(0.4); // ~22 degrees - Steeper slope
-                this.groundYStart = 100;
-                this.baseScrollSpeed = 3;
-                this.maxScrollSpeed = 9;
-                
-                // Player properties
-                this.playerX = 250; // More central POV
-                this.playerRadius = 20;
-                this.gravity = 0.5;
-                this.jumpStrength = -12;
-
-                // Obstacle properties
-                this.obstacleGap = 350;
-
-                this.highScore = this.loadHighScore();
-                this.gameState = 'menu';
-                this.init();
-            }
-
-            init() {
-                this.playerY = this.getGroundY(this.playerX);
-                this.playerVelY = 0;
-                this.onGround = true;
-                this.score = 0;
-                this.scrollSpeed = this.baseScrollSpeed;
-                this.obstacles = [];
-
-                let lastX = this.width;
-                for (let i = 0; i < 5; i++) {
-                    const spawnX = lastX + this.obstacleGap + Math.random() * 400;
-                    const spawnY = this.getGroundY(spawnX);
-                    this.obstacles.push(new Obstacle(spawnX, spawnY));
-                    lastX = spawnX;
-                }
-                this.updateUI();
-            }
-            
-            getGroundY(xPos) {
-                return this.groundYStart + xPos * Math.tan(this.slopeAngle);
-            }
-
-            loadHighScore() {
-                try {
-                    const score = localStorage.getItem('declineRunnerHighScore');
-                    return score ? parseInt(score) : 0;
-                } catch (e) {
-                    console.error("Could not load high score from localStorage.", e);
-                    return 0;
-                }
-            }
-
-            saveHighScore() {
-                try {
-                    localStorage.setItem('declineRunnerHighScore', this.highScore);
-                } catch (e) {
-                    console.error("Could not save high score to localStorage.", e);
-                }
-            }
-
-            start() {
-                this.gameState = 'playing';
-                this.init();
-                gameLoop();
-            }
-
-            update() {
-                if (this.gameState !== 'playing') return;
-
-                // Difficulty Scaling
-                this.scrollSpeed = Math.min(this.maxScrollSpeed, this.baseScrollSpeed + this.score / 5);
-
-                // Player Physics
-                this.playerVelY += this.gravity;
-                this.playerY += this.playerVelY;
-
-                const groundY = this.getGroundY(this.playerX);
-                if (this.playerY >= groundY - this.playerRadius) {
-                    this.playerY = groundY - this.playerRadius;
-                    this.playerVelY = 0;
-                    this.onGround = true;
-                }
-
-                // Obstacle Update
-                this.obstacles.forEach(obstacle => {
-                    obstacle.update(this.scrollSpeed, (x) => this.getGroundY(x));
-                });
-
-                if (this.obstacles[0].x + this.obstacles[0].width < 0) {
-                    this.obstacles.shift();
-                    const lastX = this.obstacles[this.obstacles.length - 1].x;
-                    const spawnX = lastX + this.obstacleGap + Math.random() * 400;
-                    const spawnY = this.getGroundY(spawnX);
-                    this.obstacles.push(new Obstacle(spawnX, spawnY));
-                    this.score++;
-                }
-
-                // Collision Detection
-                const playerRect = {
-                    x: this.playerX - this.playerRadius,
-                    y: this.playerY - this.playerRadius,
-                    width: this.playerRadius * 2,
-                    height: this.playerRadius * 2
-                };
-
-                for (const obstacle of this.obstacles) {
-                    const obsRect = {
-                        x: obstacle.x,
-                        y: obstacle.y - obstacle.height,
-                        width: obstacle.width,
-                        height: obstacle.height
-                    };
-                    if (playerRect.x < obsRect.x + obsRect.width &&
-                        playerRect.x + playerRect.width > obsRect.x &&
-                        playerRect.y < obsRect.y + obsRect.height &&
-                        playerRect.y + playerRect.height > obsRect.y) {
-                        this.gameState = 'gameOver';
-                        if (this.score > this.highScore) {
-                            this.highScore = this.score;
-                            this.saveHighScore();
-                        }
-                    }
-                }
-                this.updateUI();
-            }
-
-            draw() {
-                ctx.clearRect(0, 0, this.width, this.height);
-
-                // Draw Platform
-                ctx.strokeStyle = '#333';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(0, this.getGroundY(0));
-                ctx.lineTo(this.width, this.getGroundY(this.width));
-                ctx.stroke();
-
-                // Draw Player
-                ctx.fillStyle = '#0064ff'; // Blue
-                ctx.beginPath();
-                ctx.arc(this.playerX, this.playerY, this.playerRadius, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Draw Obstacles
-                this.obstacles.forEach(obstacle => obstacle.draw());
-            }
-            
-            updateUI() {
-                if (this.gameState === 'menu') {
-                    menuScreen.classList.remove('hidden');
-                    gameOverScreen.classList.add('hidden');
-                    scoreDisplay.classList.add('hidden');
-                    menuHighScore.textContent = `High Score: ${this.highScore}`;
-                } else if (this.gameState === 'playing') {
-                    menuScreen.classList.add('hidden');
-                    gameOverScreen.classList.add('hidden');
-                    scoreDisplay.classList.remove('hidden');
-                    currentScoreSpan.textContent = this.score;
-                    gameplayHighScore.textContent = this.highScore;
-                } else if (this.gameState === 'gameOver') {
-                    menuScreen.classList.add('hidden');
-                    gameOverScreen.classList.remove('hidden');
-                    scoreDisplay.classList.add('hidden');
-                    finalScore.textContent = `Your Score: ${this.score}`;
-                    gameOverHighScore.textContent = `High Score: ${this.highScore}`;
-                }
-            }
-        }
-
-        const game = new Game();
-
-        function gameLoop() {
-            if (game.gameState === 'playing') {
-                game.update();
-                game.draw();
-                requestAnimationFrame(gameLoop);
-            } else {
-                game.updateUI();
-            }
-        }
+class Obstacle:
+    """A class to represent an obstacle with a specific shape."""
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.shape_type = random.choice(['square', 'rectangle', 'triangle'])
         
-        window.addEventListener('keydown', (e) => {
-            if (game.gameState === 'playing') {
-                if (e.code === 'Space' && game.onGround) {
-                    game.playerVelY = game.jumpStrength;
-                    game.onGround = false;
-                }
-            } else if (game.gameState === 'menu' || game.gameState === 'gameOver') {
-                if (e.code === 'Enter') {
-                    game.start();
-                }
-            }
-        });
+        # Define size based on shape
+        if self.shape_type == 'square':
+            size = 30
+            self.rect = pygame.Rect(x, y - size, size, size)
+        elif self.shape_type == 'rectangle':
+            width, height = 45, 25
+            self.rect = pygame.Rect(x, y - height, width, height)
+        elif self.shape_type == 'triangle':
+            size = 35
+            # Bounding box for collision detection
+            self.rect = pygame.Rect(x, y - size, size, size)
 
-        // Initial render
-        game.updateUI();
+    def draw(self, surface, color):
+        """Draws the obstacle based on its shape."""
+        if self.shape_type in ['square', 'rectangle']:
+            pygame.draw.rect(surface, color, self.rect)
+        elif self.shape_type == 'triangle':
+            # Define points for an upward-pointing triangle
+            p1 = self.rect.midtop
+            p2 = self.rect.bottomright
+            p3 = self.rect.bottomleft
+            pygame.draw.polygon(surface, color, [p1, p2, p3])
 
-    </script>
-</body>
-</html>
+    def update_pos(self, scroll_speed, ground_y_func):
+        """Updates the obstacle's position as it scrolls."""
+        self.x -= scroll_speed
+        self.rect.x = int(self.x)
+        # Keep the obstacle's bottom on the slope
+        self.rect.bottom = int(ground_y_func(self.x))
+
+
+class Game:
+    """A class to manage the entire Decline Runner game."""
+
+    def __init__(self):
+        """Initialize the game, screen, and all game variables."""
+        pygame.init()
+        # Screen and clock
+        self.width, self.height = 800, 600
+        self.screen = pygame.display.set_mode((self.width, self.height))
+        pygame.display.set_caption("Decline Runner")
+        self.clock = pygame.time.Clock()
+
+        # Colors
+        self.white = (255, 255, 255)
+        self.blue = (0, 100, 255)
+        self.red = (255, 50, 50)
+        self.black = (0, 0, 0)
+
+        # Fonts
+        self.font = pygame.font.SysFont(None, 60)
+        self.small_font = pygame.font.SysFont(None, 36)
+
+        # Game settings
+        self.slope_angle = math.radians(22) # Steeper angle
+        self.ground_y_start = 120 # Starting y-pos at the left edge
+        self.base_scroll_speed = 3.5
+        self.max_scroll_speed = 9
+        
+        # Player properties
+        self.player_x = 250 # More central POV
+        self.player_radius = 20
+        self.gravity = 0.5
+        self.jump_strength = -13
+
+        # Obstacle properties
+        self.obstacle_gap = 400  # Base distance between obstacles
+
+        # High score
+        self.high_score = self.load_high_score()
+
+        # Initial game state
+        self.game_state = 'menu' # Can be 'menu', 'playing', 'game_over'
+        self.reset_game()
+
+    def get_ground_y(self, x_pos):
+        """Calculates the y-coordinate of the platform at a given x-position."""
+        return self.ground_y_start + x_pos * math.tan(self.slope_angle)
+
+    def load_high_score(self):
+        """Loads the high score from a file, returns 0 if not found."""
+        if os.path.exists("highscore.txt"):
+            with open("highscore.txt", "r") as f:
+                try:
+                    return int(f.read())
+                except (ValueError, IOError):
+                    return 0
+        return 0
+
+    def save_high_score(self):
+        """Saves the current high score to a file."""
+        try:
+            with open("highscore.txt", "w") as f:
+                f.write(str(self.high_score))
+        except IOError:
+            print("Error: Could not save high score.")
+
+    def reset_game(self):
+        """Resets all variables for a new game."""
+        self.player_y = self.get_ground_y(self.player_x)
+        self.player_vel_y = 0
+        self.on_ground = True
+        self.score = 0
+        self.scroll_speed = self.base_scroll_speed
+        self.obstacles = []
+        
+        # Pre-populate obstacles off-screen
+        last_x = self.width
+        for _ in range(5):
+            spawn_x = last_x + self.obstacle_gap + random.randint(100, 400)
+            spawn_y = self.get_ground_y(spawn_x)
+            self.obstacles.append(Obstacle(spawn_x, spawn_y))
+            last_x = spawn_x
+
+    def run(self):
+        """The main game loop."""
+        while True:
+            self.handle_events()
+            self.update()
+            self.draw()
+            self.clock.tick(60)
+
+    def handle_events(self):
+        """Handles all user input events."""
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.save_high_score()
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if self.game_state == 'playing':
+                    if event.key == pygame.K_SPACE and self.on_ground:
+                        self.player_vel_y = self.jump_strength
+                        self.on_ground = False
+                elif self.game_state in ('menu', 'game_over'):
+                    if event.key == pygame.K_RETURN:
+                        self.reset_game()
+                        self.game_state = 'playing'
+
+    def update(self):
+        """Updates the game state each frame."""
+        if self.game_state != 'playing':
+            return
+
+        # --- Difficulty Scaling ---
+        self.scroll_speed = min(self.max_scroll_speed, self.base_scroll_speed + self.score / 5)
+
+        # --- Physics and Player Update ---
+        self.player_vel_y += self.gravity
+        self.player_y += self.player_vel_y
+
+        # Calculate ground y-position directly under the player
+        ground_y = self.get_ground_y(self.player_x)
+        
+        # Check for landing on the ground
+        if self.player_y >= ground_y - self.player_radius:
+            self.player_y = ground_y - self.player_radius
+            self.player_vel_y = 0
+            self.on_ground = True
+
+        # --- Obstacle Update ---
+        for obstacle in self.obstacles:
+            obstacle.update_pos(self.scroll_speed, self.get_ground_y)
+        
+        # Remove off-screen obstacles and add new ones
+        if self.obstacles and self.obstacles[0].rect.right < 0:
+            self.obstacles.pop(0)
+            last_x = self.obstacles[-1].x
+            spawn_x = last_x + self.obstacle_gap + random.randint(100, 400)
+            spawn_y = self.get_ground_y(spawn_x)
+            self.obstacles.append(Obstacle(spawn_x, spawn_y))
+            self.score += 1
+
+        # --- Collision Detection ---
+        player_rect = pygame.Rect(self.player_x - self.player_radius, self.player_y - self.player_radius, self.player_radius * 2, self.player_radius * 2)
+        for obstacle in self.obstacles:
+            if player_rect.colliderect(obstacle.rect):
+                self.game_state = 'game_over'
+                if self.score > self.high_score:
+                    self.high_score = self.score
+
+    def draw_text(self, text, font, x, y, color, center=False):
+        """Helper function to draw text on the screen."""
+        label = font.render(text, True, color)
+        rect = label.get_rect()
+        if center:
+            rect.center = (x, y)
+        else:
+            rect.topleft = (x, y)
+        self.screen.blit(label, rect)
+
+    def draw(self):
+        """Draws all game elements to the screen."""
+        self.screen.fill(self.white)
+
+        # --- Draw the declining platform ---
+        start_pos = (0, self.get_ground_y(0))
+        end_pos = (self.width, self.get_ground_y(self.width))
+        pygame.draw.line(self.screen, self.black, start_pos, end_pos, 3)
+
+        # --- Draw Player and Obstacles ---
+        if self.game_state == 'playing':
+            pygame.draw.circle(self.screen, self.blue, (int(self.player_x), int(self.player_y)), self.player_radius)
+            for obstacle in self.obstacles:
+                obstacle.draw(self.screen, self.red)
+            
+            # Draw score
+            self.draw_text(f"Score: {self.score}", self.small_font, 10, 10, self.black)
+            self.draw_text(f"High Score: {self.high_score}", self.small_font, 10, 40, self.black)
+
+        # --- Draw UI Screens ---
+        if self.game_state == 'menu':
+            self.draw_text("Decline Runner", self.font, self.width / 2, self.height / 4, self.black, center=True)
+            self.draw_text("Press ENTER to Start", self.small_font, self.width / 2, self.height / 2, self.black, center=True)
+            self.draw_text(f"High Score: {self.high_score}", self.small_font, self.width / 2, self.height / 2 + 40, self.black, center=True)
+
+        elif self.game_state == 'game_over':
+            self.draw_text("Game Over", self.font, self.width / 2, self.height / 4, self.black, center=True)
+            self.draw_text(f"Your Score: {self.score}", self.small_font, self.width / 2, self.height / 2 - 40, self.black, center=True)
+            self.draw_text(f"High Score: {self.high_score}", self.small_font, self.width / 2, self.height / 2, self.black, center=True)
+            self.draw_text("Press ENTER to Restart", self.small_font, self.width / 2, self.height / 2 + 60, self.black, center=True)
+
+        pygame.display.flip()
+
+if __name__ == "__main__":
+    game = Game()
+    game.run()

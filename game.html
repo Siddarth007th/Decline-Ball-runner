@@ -331,7 +331,12 @@
         }
         
         // --- Input Handling ---
-        function handleInput() {
+        function handleInput(event) {
+            // Prevent default browser actions for touch events (like scrolling or zooming)
+            if (event && event.type.includes('touch')) {
+                event.preventDefault();
+            }
+
             if (game.gameState === 'playing') {
                 if (game.onGround) {
                     game.playerVelY = game.jumpStrength;
@@ -342,17 +347,16 @@
             }
         }
 
+        // Listen for keyboard input on the whole window
         window.addEventListener('keydown', (e) => {
             if (e.code === 'Space' || e.code === 'Enter') {
-                handleInput();
+                handleInput(e);
             }
         });
         
-        // Add touch support
-        window.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // Prevents screen from moving on tap
-            handleInput();
-        }, { passive: false });
+        // Listen for touch and mouse clicks directly on the canvas
+        canvas.addEventListener('mousedown', handleInput);
+        canvas.addEventListener('touchstart', handleInput, { passive: false });
 
 
         // Initial render
@@ -361,4 +365,3 @@
     </script>
 </body>
 </html>
-
